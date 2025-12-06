@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirForce School, Hasimara - Independent Student Reviews</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #003366; /* Air Force blue */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        .admin-link {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin: 0;
+        }
+        .disclaimer {
+            font-size: 14px;
+            color: #856404; /* Darker color for contrast */
+            margin-top: 10px;
+            background-color: #fff3cd; /* Light yellow background */
+            border: 2px solid #ffeeba; /* Light yellow border */
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .website-description {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-style: italic;
+        }
+        .submit-review {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            background-color: #003366;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #005599;
+        }
+        .form-section {
+            display: none;
+        }
+        .form-section.active {
+            display: block;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        .rating-section {
+            margin-bottom: 20px;
+        }
+        .stars {
+            display: flex;
+            cursor: pointer;
+        }
+        .star {
+            font-size: 24px;
+            color: #ccc; /* Blank/gray */
+            margin-right: 5px;
+        }
+        .star.selected {
+            color: #ffd700; /* Yellow */
+        }
+        .overall-rating {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .overall-stars {
+            font-size: 24px;
+            color: #ffd700;
+        }
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .highlight {
+            background-color: #fff3cd; /* Light yellow background for highlighting */
+            border: 2px solid #ffeeba; /* Thicker border for better visibility */
+            padding: 15px; /* More padding */
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 16px; /* Larger font */
+            color: #856404;
+            font-weight: bold; /* Bold text */
+        }
+        .reviews {
+            margin-top: 40px;
+        }
+        .review {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        .admin-panel {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .admin-panel.active {
+            display: block;
+        }
+        .pending-review {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #fff;
+        }
+        .pending-review button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AirForce School, Hasimara - Independent Student Reviews</h1>
+        <p class="disclaimer">This is a third-party, independent website created by students for students. It is not affiliated with or endorsed by the official AirForce School, Hasimara. All reviews are anonymous and shared voluntarily.</p>
+        <div class="admin-link" id="adminLink">Admin</div>
+    </header>
+
+    <div class="container">
+        <div class="website-description">
+            <p>This website was created by students and alumni of AirForce School, Hasimara to provide a safe, anonymous platform for sharing honest feedback and experiences. We believe in fostering transparency and helping current and prospective students make informed decisions about their education. Your voice matters—share your thoughts to improve the school community!</p>
+        </div>
+
+        <div id="adminLogin" class="form-section">
+            <h3>Admin Login</h3>
+            <label for="codeName">Code Name:</label>
+            <input type="text" id="codeName" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+            <button id="loginBtn">Login</button>
+            <button id="cancelLogin">Cancel</button>
+        </div>
+
+        <div id="adminPanel" class="admin-panel">
+            <h3>Admin Panel - Pending Reviews</h3>
+            <div id="pendingReviews"></div>
+            <button id="logoutBtn">Logout</button>
+        </div>
+
+        <div class="submit-review">
+            <button id="submitBtn">Submit a Review</button>
+        </div>
+
+        <div id="reviewForm" class="form-section">
+            <h2>Submit Your Review</h2>
+            <p>Select your category:</p>
+            <button class="category-btn" data-category="student">Student</button>
+            <button class="category-btn" data-category="alumni">Alumni</button>
+            <button class="category-btn" data-category="parent">Parent/Guardian</button>
+
+            <div id="studentOptions" class="form-section">
+                <p>Select your grade:</p>
+                <select id="grade">
+                    <option value="">Choose grade</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+            </div>
+
+            <form id="reviewFormDetails" class="form-section">
+                <div class="rating-section">
+                    <label>Faculty:</label>
+                    <div class="stars" data-category="faculty">
+                        <span class="star" data-value="1">☆</span>
+                        <span class="star" data-value="2">☆</span>
+                        <span class="star" data-value="3">☆</span>
+                        <span class="star" data-value="4">☆</span>
+                        <span class="star" data-value="5">☆</span>
+                    </div>
+                </div>
+                <div class="rating-section">
+                    <label>Study:</label>
+                    <div class="stars" data-category="study">
+                        <span class="star" data-value="1">☆</span>
+                        <span class="star" data-value="2">☆</span>
+                        <span class="star" data-value="3">☆</span>
+                        <span class="star" data-value="4">☆</span>
+                        <span class="star" data-value="5">☆</span>
+                    </div>
+                </div>
+                <div class="rating-section">
+                    <label>Overall Environment:</label>
+                    <div class="stars" data-category="environment">
+                        <span class="star" data-value="1">☆</span>
+                        <span class="star" data-value="2">☆</span>
+                        <span class="star" data-value="3">☆</span>
+                        <span class="star" data-value="4">☆</span>
+                        <span class="star" data-value="5">☆</span>
+                    </div>
+                </div>
+                <div class="rating-section">
+                    <label>Faculty:</label>
+                    <div class="stars" data-category="faculty2">
+                        <span class="star" data-value="1">☆</span>
+                        <span class="star" data-value="2">☆</span>
+                        <span class="star" data-value="3">☆</span>
+                        <span class="star" data-value="4">☆</span>
+                        <span class="star" data-value="5">☆</span>
+                    </div>
+                </div>
+                <div class="rating-section">
+                    <label>Drinking Water and Washroom:</label>
+                    <div class="stars" data-category="water_washroom">
+                        <span class="star" data-value="1">☆</span>
+                        <span class="star" data-value="2">☆</span>
+                        <span class="star" data-value="3">☆</span>
+                        <span class="star" data-value="4">☆</span>
+                        <span class="star" data-value="5">☆</span>
+                    </div>
+                </div>
+                <div class="rating-section">
+                    <label>Facilities:</label>
+                    <div class="stars" data-category="facilities">
+                        <span class="star" data-value="1">☆</span>
+                        <span class="star" data-value="2">☆</span>
+                        <span class="star" data-value="3">☆</span>
+                        <span class="star" data-value="4">☆</span>
+                        <span class="star" data-value="5">☆</span>
+                    </div>
+                </div>
+                <div class="rating-section">
+                    <label>Sports and Extracurriculars:</label>
+                    <div class="stars" data-category="sports">
+                        <span class="star" data-value="1">☆</span>
+                        <span class="star" data-value="2">☆</span>
+                        <span class="star" data-value="3">☆</span>
+                        <span class="star" data-value="4">☆</span>
+                        <span class="star" data-value="5">☆</span>
+                    </div>
+                </div>
+                <div class="rating-section">
+                    <label>Fees:</label>
+                    <div class="stars" data-category="fees">
+                        <span class="star" data-value="1">☆</span>
+                        <span class="star" data-value="2">☆</span>
+                        <span class="star" data-value="3">☆</span>
+                        <span class="star" data-value="4">☆</span>
+                        <span class="star" data-value="5">☆</span>
+                    </div>
+                </div>
+
+                <div class="overall-rating">
+                    <p>Overall Rating:</p>
+                    <div class="overall-stars" id="overallStars"></div>
+                </div>
+
+                <div class="highlight">
+                    <strong>Important Disclaimer:</strong> All reviews are user-generated and do not reflect the official views, policies, or endorsements of AirForce School, Hasimara or the Indian Air Force. By submitting a review, you confirm that your description is your own personal opinion and experience. This website is independent and not affiliated with any official entity. Submissions may be moderated for appropriateness.
+                </div>
+
+                <label for="description">Describe your experience (please share details about your time at the school, including positives, negatives, and any suggestions):</label>
+                <textarea id="description" rows="6" placeholder="e.g., I loved the teachers but the facilities could be better..." required></textarea>
+
+                <button type="submit">Submit Review</button>
+            </form>
+        </div>
+
+        <div class="reviews">
+            <h2>Recent Reviews</h2>
+            <div id="approvedReviews">
+                <!-- Approved reviews will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ratings = {
+            faculty: 0,
+            study: 0,
+            environment: 0,
+            faculty2: 0,
+            water_washroom: 0,
+            facilities: 0,
+            sports: 0,
+            fees: 0
+        };
+
+        // Load approved reviews on page load
+        window.addEventListener('DOMContentLoaded', loadApprovedReviews);
+
+        document.getElementById('adminLink').addEventListener('click', function() {
+            document.getElementById('adminLogin').classList.add('active');
+        });
+
+        document.getElementById('cancelLogin').addEventListener('click', function() {
+            document.getElementById('adminLogin').classList.remove('active');
+        });
+
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            const codeName = document.getElementById('codeName').value;
+            const password = document.getElementById('password').value;
+            if (codeName === 'ADMIN' && password === 'Jackdon') {
+                document.getElementById('adminLogin').classList.remove('active');
+                document.getElementById('adminPanel').classList.add('active');
+                loadPendingReviews();
+            } else {
+                alert('Invalid credentials!');
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            document.getElementById('adminPanel').classList.remove('active');
+        });
+
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            document.getElementById('reviewForm').classList.add('active');
+        });
+
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const category = this.getAttribute('data-category');
+
+                // mark active
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                if (category === 'student') {
+                    document.getElementById('studentOptions').classList.add('active');
+                } else {
+                    document.getElementById('studentOptions').classList.remove('active');
+                }
+                document.getElementById('reviewFormDetails').classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.stars').forEach(starsDiv => {
+            const category = starsDiv.getAttribute('data-category');
+            const starElements = starsDiv.querySelectorAll('.star');
+
+            starElements.forEach(star => {
+                star.addEventListener('click', function() {
+                    const value = parseInt(this.getAttribute('data-value'));
+                    ratings[category] = value;
+
+                    // Update stars
+                    starElements.forEach((s, index) => {
+                        if (index < value) {
+                            s.classList.add('selected');
+                        } else {
+                            s.classList.remove('selected');
+                        }
+                    });
+
+                    // Calculate overall
+                    calculateOverall();
+                });
+            });
+        });
+
+        function calculateOverall() {
+            const values = Object.values(ratings);
+            const sum = values.reduce((a, b) => a + b, 0);
+            const average = sum / values.length;
+            const rounded = Math.round(average);
+
+            const overallStarsDiv = document.getElementById('overallStars');
+            overallStarsDiv.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                if (i < rounded) {
+                    overallStarsDiv.innerHTML += '★';
+                } else {
+                    overallStarsDiv.innerHTML += '☆';
+                }
+            }
+        }
+
+        document.getElementById('reviewFormDetails').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const activeCategoryBtn = document.querySelector('.category-btn.active');
+            const category = activeCategoryBtn ? activeCategoryBtn.getAttribute('data-category') : '';
+            const grade = document.getElementById('grade').value;
+            const description = document.getElementById('description').value;
+            const overall = document.getElementById('overallStars').innerHTML || '☆☆☆☆☆';
+
+            const review = {
+                category,
+                grade,
+                ratings: { ...ratings },
+                description,
+                overall,
+                timestamp: new Date().toISOString()
+            };
+
+            // Save to pending reviews
+            let pending = JSON.parse(localStorage.getItem('pendingReviews')) || [];
+            pending.push(review);
+            localStorage.setItem('pendingReviews', JSON.stringify(pending));
+
+            alert('Review submitted and is pending approval!');
+            // Reset form and ratings
+            this.reset();
+            Object.keys(ratings).forEach(key => ratings[key] = 0);
+            document.querySelectorAll('.star').forEach(star => star.classList.remove('selected'));
+            document.getElementById('overallStars').innerHTML = '';
+            document.getElementById('reviewForm').classList.remove('active');
+            document.getElementById('studentOptions').classList.remove('active');
+            document.getElementById('reviewFormDetails').classList.remove('active');
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+        });
+
+        function loadPendingReviews() {
+            const pending = JSON.parse(localStorage.getItem('pendingReviews')) || [];
+            const container = document.getElementById('pendingReviews');
+            container.innerHTML = '';
+            pending.forEach((review, index) => {
+                const div = document.createElement('div');
+                div.className = 'pending-review';
+                div.innerHTML = `
+                    <p><strong>${review.category} ${review.grade ? `(Grade ${review.grade})` : ''}:</strong> ${review.description}</p>
+                    <p>Overall: ${review.overall}</p>
+                    <button onclick="approveReview(${index})">Approve</button>
+                    <button onclick="rejectReview(${index})">Reject</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function loadApprovedReviews() {
+            const approved = JSON.parse(localStorage.getItem('approvedReviews')) || [];
+            const container = document.getElementById('approvedReviews');
+            container.innerHTML = '';
+            approved
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .forEach(review => {
+                    const div = document.createElement('div');
+                    div.className = 'review';
+                    const who = review.category
+                        ? review.category.charAt(0).toUpperCase() + review.category.slice(1)
+                        : 'User';
+                    const gradeInfo = review.grade ? ` (Grade ${review.grade})` : '';
+                    const date = new Date(review.timestamp).toLocaleString();
+                    div.innerHTML = `
+                        <p><strong>${who}${gradeInfo}</strong> • <em>${date}</em></p>
+                        <p>${review.description}</p>
+                        <p>Overall: ${review.overall}</p>
+                    `;
+                    container.appendChild(div);
+                });
+        }
+
+        function approveReview(index) {
+            let pending = JSON.parse(localStorage.getItem('pendingReviews')) || [];
+            const approved = pending.splice(index, 1)[0];
+            localStorage.setItem('pendingReviews', JSON.stringify(pending));
+
+            let approvedReviews = JSON.parse(localStorage.getItem('approvedReviews')) || [];
+            approvedReviews.push(approved);
+            localStorage.setItem('approvedReviews', JSON.stringify(approvedReviews));
+
+            loadPendingReviews();
+            loadApprovedReviews();
+        }
+
+        function rejectReview(index) {
+            let pending = JSON.parse(localStorage.getItem('pendingReviews')) || [];
+            pending.splice(index, 1);
+            localStorage.setItem('pendingReviews', JSON.stringify(pending));
+            loadPendingReviews();
+        }
+    </script>
+</body>
+</html>
